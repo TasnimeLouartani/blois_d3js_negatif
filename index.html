@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réseau de Grappes - Schéma Systémique Adapté</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <style>
+        .node {
+            stroke: #000;
+            stroke-width: 1.5px;
+        }
+
+        text {
+            font: 12px sans-serif;
+            pointer-events: none;
+        }
+
+        .link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 2px;
+        }
+    </style>
+</head>
+<body>
+    <svg width="1400" height="1000"></svg>
+    <script>
+        const data = {
+            nodes: [
+                { id: "Globalisation des Foncières", group: 1 , chef: 1 },
+                { id: "Gestion externalisée", group: 1, chef: 2 },
+                { id: "Loyers élevés", group: 1, chef: 2 },
+                { id: "Absence d’ancrage local", group: 1, chef: 2 },
+                { id: "Création de produits financiers complexes", group: 1, chef: 2 },
+                { id: "Manque d'investissements", group: 1, chef: 2 },
+				{ id: "Financiarisation de l'immobilier", group: 1, chef: 2 },
+				{ id: "Spéculation sur les biens", group: 1, chef: 2 },
+				{ id: "Stratégie de sur-valorisation des actifs", group: 1, chef: 2 },
+
+                { id: "Dégradation des Bâtiments", group: 2 , chef: 1 },
+                { id: "Condamnation de l'accès aux étages", group: 2, chef: 2 },
+                { id: "Bâtiments en déclin", group: 2, chef: 2 },
+                { id: "Vacance commerciale", group: 2, chef: 2 },
+                { id: "Dévalorisation des centres-villes", group: 2, chef: 2 },
+				{ id: "Passoires thermiques", group: 2, chef: 2 },
+				{ id: "Immeubles non entretenus", group: 2, chef: 2 },
+				
+
+                { id: "Défis des co-propriétaires", group: 3 , chef: 1 },
+                { id: "Blocages juridiques et notariaux", group: 3, chef: 2 },
+                { id: "Manque de connaissance du patrimoine foncier", group: 3, chef: 2 },
+                { id: "Incapacité à prendre des décisions rapides", group: 3, chef: 2 },
+                { id: "Situations individuelles hétérogènes", group: 3, chef: 2 },
+				{ id: "Désaccord entre multipropriétaires", group: 3, chef: 2 },
+
+                { id: "Boucles de Rétroaction Négative", group: 4 , chef: 1 },
+                //{ id: "Vacance commerciale", group: 4 },
+                { id: "Baisse de l'attractivité", group: 4, chef: 2 },
+                { id: "Cercle vicieux de dégradation", group: 4, chef: 2 },
+                { id: "Déclin progressif des centres-villes", group: 4, chef: 2 },
+				{ id: "Erosion du tissu social", group: 4, chef: 2 },
+				{ id: "Départ des habitants et des commerces", group: 4, chef: 2 },
+				
+            ],
+            links: [
+                // Globalisation des Foncières
+                { source: "Globalisation des Foncières", target: "Gestion externalisée" },
+                { source: "Globalisation des Foncières", target: "Loyers élevés" },
+                { source: "Globalisation des Foncières", target: "Création de produits financiers complexes" },
+                { source: "Globalisation des Foncières", target: "Manque d'investissements" },
+				{ source: "Globalisation des Foncières", target: "Absence d’ancrage local" },
+				{ source: "Globalisation des Foncières", target: "Financiarisation de l'immobilier" },
+				{ source: "Globalisation des Foncières", target: "Spéculation sur les biens" },
+				{ source: "Globalisation des Foncières", target: "Stratégie de sur-valorisation des actifs" },
+
+                // Dégradation des Bâtiments
+                { source: "Dégradation des Bâtiments", target: "Condamnation de l'accès aux étages" },
+                { source: "Dégradation des Bâtiments", target: "Bâtiments en déclin" },
+                { source: "Dégradation des Bâtiments", target: "Vacance commerciale" },
+                { source: "Dégradation des Bâtiments", target: "Dévalorisation des centres-villes" },
+				{ source: "Dégradation des Bâtiments", target: "Passoires thermiques" },
+				{ source: "Dégradation des Bâtiments", target: "Immeubles non entretenus" },
+
+                // Défis des co-propriétaires
+                { source: "Défis des co-propriétaires", target: "Blocages juridiques et notariaux" },
+                { source: "Défis des co-propriétaires", target: "Manque de connaissance du patrimoine foncier" },
+                { source: "Défis des co-propriétaires", target: "Incapacité à prendre des décisions rapides" },
+                { source: "Défis des co-propriétaires", target: "Situations individuelles hétérogènes" },
+                { source: "Défis des co-propriétaires", target: "Désaccord entre multipropriétaires" },
+				{ source: "Défis des co-propriétaires", target: "Absence d’ancrage local" },
+				
+				
+                // Boucles de Rétroaction Négative
+                { source: "Boucles de Rétroaction Négative", target: "Vacance commerciale" },
+                { source: "Boucles de Rétroaction Négative", target: "Baisse de l'attractivité" },
+                { source: "Boucles de Rétroaction Négative", target: "Cercle vicieux de dégradation" },
+                { source: "Boucles de Rétroaction Négative", target: "Déclin progressif des centres-villes" },
+				{ source: "Boucles de Rétroaction Négative", target: "Erosion du tissu social" },
+				{ source: "Boucles de Rétroaction Négative", target: "Départ des habitants et des commerces" },
+            ]
+        };
+
+        const colors = {
+            1: "#FFB3B3", // Rose pour Globalisation des Foncières
+            2: "#fdfd96", // Jaune pour Dégradation des Bâtiments
+            3: "#ADD8E6", // Bleu pour Défis des co-propriétaires
+            4: "#FF6347"  // Rouge pour Boucles de Rétroaction Négative
+        };
+
+        const svg = d3.select("svg"),
+            width = +svg.attr("width"),
+            height = +svg.attr("height");
+
+		const rayon = {
+			1: "30",
+			2: "15",
+		};
+		
+        const simulation = d3.forceSimulation(data.nodes)
+            .force("link", d3.forceLink(data.links).id(d => d.id).distance(120))
+            .force("charge", d3.forceManyBody().strength(-50))
+            .force("center", d3.forceCenter(width / 2, height / 2))
+            .force("collision", d3.forceCollide().radius(50));
+
+        const link = svg.append("g")
+            .attr("class", "links")
+            .selectAll("line")
+            .data(data.links)
+            .enter().append("line")
+            .attr("class", "link")
+            .attr("stroke-width", 2);
+
+        const node = svg.append("g")
+            .attr("class", "nodes")
+            .selectAll("circle")
+            .data(data.nodes)
+            .enter().append("circle")
+            .attr("class", "node")
+            .attr("r", d => rayon[d.chef])
+            .attr("fill", d => colors[d.group])
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended))
+            .on("click", clicked);
+
+        const text = svg.append("g")
+            .attr("class", "texts")
+            .selectAll("text")
+            .data(data.nodes)
+            .enter().append("text")
+            .attr("dy", 3)
+            .attr("x", 20)
+            .style("font-size", "12px")
+            .text(d => d.id);
+
+        simulation.on("tick", () => {
+            link
+                .attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+
+			node
+				.attr("cx", d => d.x = Math.max(30, Math.min(1000 - 30, d.x)))
+				.attr("cy", d => d.y = Math.max(30, Math.min(800 - 30, d.y)));
+
+            text
+                .attr("x", d => d.x + 15)
+                .attr("y", d => d.y);
+        });
+
+        function dragstarted(event, d) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+
+        function dragged(event, d) {
+            d.fx = event.x;
+            d.fy = event.y;
+        }
+
+        function dragended(event, d) {
+            if (!event.active) simulation.alphaTarget(0);
+            if (!d.fixed) {
+                d.fx = null;
+                d.fy = null;
+            }
+        }
+
+        function clicked(event, d) {
+            if (d.fixed) {
+                d.fx = null;
+                d.fy = null;
+                d.fixed = false;
+            } else {
+                d.fx = d.x;
+                d.fy = d.y;
+                d.fixed = true;
+            }
+        }
+    </script>
+</body>
+</html>
